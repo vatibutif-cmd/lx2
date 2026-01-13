@@ -57,7 +57,7 @@ const BatteryOverlay = ({ percent }) => {
                     <div className="absolute inset-0 rounded-full bg-brand-green animate-ping opacity-75"></div>
                     <div className="relative rounded-full h-2 w-2 bg-brand-green"></div>
                 </div>
-                <span className="text-brand-green text-[1.2vh] font-bold tracking-widest shadow-black drop-shadow-md">
+                <span className="text-brand-green text-sm font-bold tracking-widest shadow-black drop-shadow-md">
                     即将满值，扫码加速
                 </span>
             </div>
@@ -69,16 +69,16 @@ const BatteryOverlay = ({ percent }) => {
 
 const LiveLogs = ({ logs }) => {
   return (
-    <div className="flex flex-col gap-3 text-brand-text-blue text-[1.5vmin] font-mono overflow-hidden h-full">
+    <div className="flex flex-col gap-3 text-brand-text-blue text-sm font-mono overflow-hidden h-full">
         <div className="shrink-0 flex flex-col gap-1 border-b border-white/10 pb-2">
             <div className="flex items-center gap-2">
                 <div className="w-[1vmin] h-[1vmin] rounded-full bg-brand-green animate-pulse" />
-                <span className="text-white font-bold tracking-wider text-[1.8vmin]">实时充电参与者</span>
+                <span className="text-white font-bold tracking-wider text-lg">实时充电参与者</span>
             </div>
 
         </div>
         <div className="flex-1 overflow-hidden relative">
-            <div className="flex flex-col gap-[1vmin] w-full transition-all duration-300">
+            <div className="flex flex-col gap-2 w-full transition-all duration-300">
                 {logs.map((log, index) => (
                     <div key={index} className="flex items-center gap-2 whitespace-nowrap text-brand-text-blue/80 animate-[slideIn_0.5s_ease-out]">
                         <span className="opacity-70">[{log.timestamp}]</span>
@@ -123,12 +123,22 @@ export default function BigScreen() {
       setPercent(state.progress);
       setLogs(state.logs);
       
-      // Prefer public URL if available (for WeChat), otherwise fallback to IP
+      // Prefer public URL if available
       if (state.publicUrl) {
           setJoinUrl(`${state.publicUrl}/join`);
-      } else if (state.serverIp) {
-          const port = state.port || 5173;
-          setJoinUrl(`http://${state.serverIp}:${port}/join`);
+      } else {
+          // Improved logic: If we are on a public IP/domain, use it. 
+          // Only fallback to serverIp (LAN IP) if we are on localhost.
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          
+          if (isLocalhost && state.serverIp) {
+              const port = state.port || 3001;
+              setJoinUrl(`http://${state.serverIp}:${port}/join`);
+          } else {
+              // Use current hostname (works for Public IPs, domains, etc.)
+              const port = window.location.port ? `:${window.location.port}` : '';
+              setJoinUrl(`${window.location.protocol}//${window.location.hostname}${port}/join`);
+          }
       }
     });
 
@@ -210,7 +220,7 @@ export default function BigScreen() {
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(rgba(255, 193, 7, 0.3) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
 
-      <div className="w-full h-full max-w-[177.78vh] max-h-[56.25vw] aspect-video relative z-10 grid grid-cols-12 gap-8 p-4 md:p-8 lg:p-12 items-center mx-auto">
+      <div className="w-full h-full aspect-video relative z-10 grid grid-cols-12 gap-8 p-4 md:p-8 lg:p-12 items-center mx-auto">
          <div className="absolute inset-0 border border-brand-gold/10 rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] bg-black/20 backdrop-blur-sm pointer-events-none" />
          
          {/* Left Side (55%) - Reduced dominance */}
@@ -218,17 +228,17 @@ export default function BigScreen() {
             <div className="relative h-[85%] w-auto aspect-[450/800] transition-transform duration-500">
                  <img src="/charging-station.png" className="h-full w-full object-contain drop-shadow-[0_0_30px_rgba(0,0,0,0.5)]" alt="Energy Cabinet" />
                  <div className="absolute left-[8%] top-[15%] bottom-[15%] w-[0.5%] min-w-[3px] bg-brand-yellow/80 shadow-[0_0_15px_rgba(255,215,0,0.5)] flex flex-col justify-center items-center py-4 overflow-hidden">
-                    <div className="whitespace-nowrap -rotate-90 text-brand-black font-bold tracking-[0.5em] text-[1.2vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vh] text-center">
+                    <div className="whitespace-nowrap -rotate-90 text-brand-black font-bold tracking-[0.5em] text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 text-center">
                         ROCHEX ENERGY
                     </div>
                  </div>
-                 <div className="absolute top-[12%] left-1/2 -translate-x-1/2 flex gap-[1.5vh] z-20">
-                    <div className="w-[1vh] h-[1vh] rounded-full bg-[#00FF00] shadow-[0_0_10px_#00FF00]" />
-                    <div className="w-[1vh] h-[1vh] rounded-full bg-[#FF0000] opacity-30" />
-                    <div className="w-[1vh] h-[1vh] rounded-full bg-[#00FF00] shadow-[0_0_10px_#00FF00]" />
+                 <div className="absolute top-[12%] left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                    <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_10px_#00FF00]" />
+                    <div className="w-2 h-2 rounded-full bg-[#FF0000] opacity-30" />
+                    <div className="w-2 h-2 rounded-full bg-[#00FF00] shadow-[0_0_10px_#00FF00]" />
                  </div>
                  <div className="absolute top-[35%] left-1/2 -translate-x-1/2 z-20">
-                     <div className="relative w-[6vh] h-[6vh] flex items-center justify-center">
+                     <div className="relative w-16 h-16 flex items-center justify-center">
                         <div
                           className={`absolute inset-0 rounded-full ${particles.length > 0 ? 'animate-[electricPulse_0.18s_ease-in-out_infinite]' : 'animate-[electricPulse_1.6s_ease-in-out_infinite]'}`}
                           style={{
@@ -263,7 +273,7 @@ export default function BigScreen() {
                         />
                         <svg
                           viewBox="0 0 24 24"
-                          className={`relative z-10 w-[3.3vh] h-[3.3vh] ${particles.length > 0 ? 'animate-[boltFlicker_0.18s_ease-in-out_infinite]' : 'animate-[boltFlicker_0.85s_ease-in-out_infinite]'}`}
+                          className={`relative z-10 w-8 h-8 ${particles.length > 0 ? 'animate-[boltFlicker_0.18s_ease-in-out_infinite]' : 'animate-[boltFlicker_0.85s_ease-in-out_infinite]'}`}
                           style={{
                             filter:
                               'drop-shadow(0 0 10px rgba(0,255,127,0.9)) drop-shadow(0 0 22px rgba(0,255,127,0.35))',
@@ -288,16 +298,16 @@ export default function BigScreen() {
                 <div className="absolute inset-0 rounded-2xl border border-brand-gold/5 shadow-[inset_0_0_30px_rgba(255,193,7,0.02)] pointer-events-none" />
                 
                 {/* QR Code Section */}
-                <div className="flex flex-col items-center gap-[4vh] mb-4 flex-1 justify-center">
-                    <div className="w-[38vmin] h-[38vmin] bg-white rounded-xl p-4 border border-white/10 relative shrink-0 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
+                <div className="flex flex-col items-center gap-8 mb-4 flex-1 justify-center">
+                    <div className="w-64 h-64 bg-white rounded-xl p-4 border border-white/10 relative shrink-0 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
                          <QRCodeSVG value={joinUrl} className="w-full h-full" />
                          <div className="absolute inset-0 border-2 border-brand-green/30 rounded-xl shadow-[0_0_15px_rgba(0,255,127,0.1)] animate-pulse pointer-events-none" />
                     </div>
-                    <div className="text-center space-y-[2vh]">
+                    <div className="text-center space-y-4">
                         <div className="px-8 py-3 bg-brand-green/10 rounded-full inline-block border border-brand-green/20">
-                            <h3 className="text-brand-green font-bold text-[2.5vmin] tracking-widest uppercase">扫码蓄力 | SCAN TO POWER UP</h3>
+                            <h3 className="text-brand-green font-bold text-xl tracking-widest uppercase">扫码蓄力 | SCAN TO POWER UP</h3>
                         </div>
-                        <p className="text-brand-white text-[4vmin] font-bold leading-tight mt-4">
+                        <p className="text-brand-white text-2xl font-bold leading-tight mt-4">
                             使用微信扫码<br/>
                             <span className="text-brand-text-blue">为年会注入能量</span>
                         </p>
