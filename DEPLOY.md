@@ -128,5 +128,5 @@ server {
     pm2 delete newyear-energy
     
     # 2. 使用新域名重新启动
-    pm2 start server/index.js --name "newyear-energy" --env PUBLIC_URL=http://new-domain.com
+    pm2 start server/index.js --name "newyear-energy" --env PUBLIC_URL=http://lxnewyear.com
     ```
