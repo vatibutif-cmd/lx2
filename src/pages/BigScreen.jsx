@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { QRCodeSVG } from 'qrcode.react';
 
 // Reusing the components from original App.jsx
-const BatteryOverlay = ({ percent }) => {
+const BatteryOverlay = ({ percent, particles = [] }) => {
   // --- 调节区域 START ---
   // 您可以手动修改以下数值来调整进度条位置
   const batteryStyle = {
@@ -33,6 +33,21 @@ const BatteryOverlay = ({ percent }) => {
       
       <div className="w-full h-full relative overflow-hidden p-1">
           <div className="absolute bottom-1 left-1 right-1 bg-brand-green/10 h-[calc(100%-8px)] rounded-[4px] overflow-hidden flex flex-col justify-end">
+              {/* Name Bubbles */}
+              {particles.map(p => (
+                <div
+                  key={p.id}
+                  className="absolute z-10 text-white font-bold text-xs whitespace-nowrap px-2 py-1 bg-black/60 border border-brand-green/30 rounded-full backdrop-blur-md animate-[bubbleUp_4s_ease-out_forwards]"
+                  style={{
+                    left: `${p.x}%`,
+                    bottom: '0%', // Start from bottom
+                    boxShadow: '0 0 10px rgba(0, 255, 127, 0.3)'
+                  }}
+                >
+                  {p.name}
+                </div>
+              ))}
+
               <div 
                 className="w-full bg-gradient-to-t from-brand-green via-[#00FF9D] to-brand-green shadow-[0_0_30px_rgba(0,255,127,0.6)] transition-all duration-700 ease-out relative"
                 style={{ height: `${percent}%` }}
@@ -153,12 +168,14 @@ export default function BigScreen() {
 
     newSocket.on('spawn_particle', (data) => {
         const particleId = Date.now() + Math.random();
-        setParticles(prev => [...prev, { id: particleId, name: data.name }]);
+        // Generate random x position between 5% and 75% to stay within battery width
+        const randomX = 5 + Math.random() * 70;
+        setParticles(prev => [...prev, { id: particleId, name: data.name, x: randomX }]);
         
-        // Remove particle after animation
+        // Remove particle after animation (4s for bubbleUp)
         setTimeout(() => {
             setParticles(prev => prev.filter(p => p.id !== particleId));
-        }, 1500);
+        }, 4000);
     });
 
     newSocket.on('completion', (data) => {
@@ -253,7 +270,7 @@ export default function BigScreen() {
                      </div>
                  </div>
 
-                 <BatteryOverlay percent={percent} />
+                 <BatteryOverlay percent={percent} particles={particles} />
             </div>
          </div>
 
