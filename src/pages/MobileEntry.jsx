@@ -74,20 +74,23 @@ export default function MobileEntry() {
                     />
                 </div>
 
-                <button 
-                    className="w-full bg-brand-green text-brand-black font-black text-xl py-4 rounded-xl shadow-[0_0_20px_rgba(0,255,127,0.3)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    onClick={handleSubmit}
-                    disabled={!name.trim() || status === 'submitting'}
-                >
-                    {status === 'submitting' ? (
-                        <span className="animate-pulse">正在注入...</span>
-                    ) : (
-                        <>
-                            <Zap className="w-5 h-5 fill-current" />
-                            <span>立即充能</span>
-                        </>
-                    )}
-                </button>
+                <div className="flex flex-col items-center gap-4 mt-8">
+                    <button 
+                        className="w-32 h-32 bg-brand-green rounded-full shadow-[0_0_30px_rgba(0,255,127,0.5)] active:scale-95 transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden"
+                        onClick={handleSubmit}
+                        disabled={!name.trim() || status === 'submitting'}
+                    >
+                        <div className="absolute inset-0 bg-white/20 animate-pulse rounded-full" />
+                        {status === 'submitting' ? (
+                            <Zap className="w-16 h-16 text-brand-black animate-spin" />
+                        ) : (
+                            <Zap className="w-16 h-16 text-brand-black fill-current animate-[pulse_1s_infinite]" />
+                        )}
+                    </button>
+                    <span className="text-brand-text-gray text-sm font-bold tracking-widest uppercase">
+                        {status === 'submitting' ? '能量注入中...' : '点击闪电注入能量'}
+                    </span>
+                </div>
             </div>
         </div>
         

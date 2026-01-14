@@ -37,11 +37,11 @@ const BatteryOverlay = ({ percent, particles = [] }) => {
               {particles.map(p => (
                 <div
                   key={p.id}
-                  className="absolute z-10 text-white font-bold text-xs whitespace-nowrap px-2 py-1 bg-black/60 border border-brand-green/30 rounded-full backdrop-blur-md animate-[bubbleUp_4s_ease-out_forwards]"
+                  className="absolute z-10 text-black font-black text-2xl whitespace-nowrap px-6 py-3 bg-gradient-to-r from-brand-green to-emerald-400 border-2 border-white rounded-full shadow-[0_0_20px_rgba(0,255,127,0.8)] animate-[bubbleUp_4s_ease-out_forwards]"
                   style={{
                     left: `${p.x}%`,
                     bottom: '0%', // Start from bottom
-                    boxShadow: '0 0 10px rgba(0, 255, 127, 0.3)'
+                    boxShadow: '0 0 15px rgba(0, 255, 127, 0.6)'
                   }}
                 >
                   {p.name}
@@ -66,16 +66,8 @@ const BatteryOverlay = ({ percent, particles = [] }) => {
                 </span>
             </div>
             
-            {/* Energy Loading Hint */}
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-green/10 border border-brand-green/30 backdrop-blur-md animate-[pulse_2s_infinite]">
-                <div className="relative w-2 h-2">
-                    <div className="absolute inset-0 rounded-full bg-brand-green animate-ping opacity-75"></div>
-                    <div className="relative rounded-full h-2 w-2 bg-brand-green"></div>
-                </div>
-                <span className="text-brand-green text-sm font-bold tracking-widest shadow-black drop-shadow-md">
-                    即将满值，扫码加速
-                </span>
-            </div>
+            {/* Energy Loading Hint Removed */}
+            
           </div>
       </div>
     </div>
@@ -148,7 +140,9 @@ export default function BigScreen() {
           const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
           
           if (isLocalhost && state.serverIp) {
-              const port = state.port || 3001;
+              // Use Vite dev server port in development, server port in production
+              const isDev = import.meta.env.DEV;
+              const port = isDev ? window.location.port || 5173 : state.port || 3001;
               setJoinUrl(`http://${state.serverIp}:${port}/join`);
           } else {
               // Use current hostname (works for Public IPs, domains, etc.)
